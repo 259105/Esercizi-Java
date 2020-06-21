@@ -1,0 +1,28 @@
+package applications;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Position {
+	private String name;
+	private SortedMap<String,Applicant> applicants =new TreeMap<>();
+	
+	public Position(String name) {
+		super();
+		this.name = name;
+	}
+
+	public String getName() {return name;}
+	
+	public List<String> getApplicants() {
+		return applicants.keySet().stream().collect(Collectors.toList());
+	}
+	
+	public String getWinner() {
+		return null; 
+	}
+	
+	public void addApplicant(Applicant a) {
+		applicants.put(a.getName(),a);
+	}
+}

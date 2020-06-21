@@ -1,0 +1,47 @@
+package diet;
+
+public class Orario implements Comparable<Orario> {
+	private int ora,minuti;
+	
+	public Orario(String orario) {
+		String sep[]=orario.split(":");
+		if(sep.length!=2)
+			return;			//Errore
+		if(sep[0].length()>24 || sep[1].length()>60)
+			return;			//Errore
+		ora=Integer.parseInt(sep[0]);
+		minuti=Integer.parseInt(sep[1]);
+	}
+	
+	public Orario(int h,int m) {
+		this.ora=h;
+		this.minuti=m;
+	}
+	
+	public int getOra() {
+		return ora;
+	}
+	public int getMinuti() {
+		return minuti;
+	}
+
+
+	@Override
+	public String toString() {
+		return String.format("%02d:%02d",ora,minuti);
+	}
+
+	@Override
+	public int compareTo(Orario o) {	
+		if(this.ora>o.ora)
+			return 1;
+		if(this.ora<o.ora)
+			return -1;
+		if(this.minuti>=o.minuti)
+			return 1;
+		if(this.minuti<=o.minuti)
+			return -1;
+		return 0;	
+	}
+	
+}

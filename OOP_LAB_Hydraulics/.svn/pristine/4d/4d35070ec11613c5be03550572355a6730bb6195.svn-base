@@ -1,0 +1,51 @@
+package hydraulic;
+
+/**
+ * Represents a source of water, i.e. the initial element for the simulation.
+ *
+ * The status of the source is defined through the method
+ * {@link #setFlow(double) setFlow()}.
+ */
+public class Source extends Element {
+
+	private Element uscita;
+	
+	public Source(String name) {
+		super(name);
+		//TODO: complete
+	}
+	
+	@Override
+	public void connect(Element elem){
+//		super.connect(elem);
+		this.uscita=elem;
+		elem.connectReverse(this);
+	}
+	
+	@Override
+	public Element getOutput(){
+		return uscita;
+	}
+	
+	/**
+	 * defines the flow produced by the source
+	 * 
+	 * @param flow
+	 */
+	public void setFlow(double flow){
+		this.flow=flow;
+	}
+	
+	@Override
+	public void simulate(SimulationObserver observer) {
+		observer.notifyFlow("Source",name,SimulationObserver.NO_FLOW,flow);
+		if(uscita!=null)
+			uscita.simulate(observer);
+	}
+
+	@Override
+	public void connectReverse(Element elem) {
+		// TODO Auto-generated method stub
+	}
+	
+}

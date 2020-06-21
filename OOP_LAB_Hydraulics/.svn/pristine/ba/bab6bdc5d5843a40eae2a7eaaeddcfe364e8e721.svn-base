@@ -1,0 +1,93 @@
+package hydraulic;
+
+import java.util.ArrayList;
+
+/**
+ * Represents a tap that can interrupt the flow.
+ * 
+ * The status of the tap is defined by the method
+ * {@link #setOpen(boolean) setOpen()}.
+ */
+
+public class Tap extends ElementExt {
+	
+	private boolean open=false;
+	
+	public Tap(String name) {
+		super(name);
+		numOutput=1;
+		uscite= new ArrayList<>(numOutput);
+	}
+	
+	@Override
+	public void connect(Element elem){
+//		super.connect(elem);
+		if(elem instanceof Source) return;
+		Uscita u= new Uscita(elem,1.0,SimulationObserver.NO_FLOW);
+		uscite.add(0,u);
+		elem.connectReverse(this);
+	}
+	
+	@Override
+	public void connectReverse(Element elem){
+//		super.connectReverse(elem);
+		if(elem instanceof Sink) return;	
+		this.ingresso=elem;
+	}
+	
+	@Override
+	public Element getOutput(){
+		return uscite.get(0).getElemento();
+	}
+	
+	/**
+	 * Defines whether the tap is open or closed.
+	 * 
+	 * @param open  opening level
+	 */
+	public void setOpen(boolean open){
+		this.open=open;
+	}
+	
+	public double getFlow() {
+		double flow;
+		if(open) {
+			flow=inFlow(ingresso,this);
+			uscite.get(0).setFlow(flow);
+			return flow;
+		}
+		uscite.get(0).setFlow(0.0);
+		return 0.0;
+	}
+	
+	@Override
+	public void simulate(SimulationObserver observer) {
+		observer.notifyFlow("Tap",name,inFlow(ingresso,this),this.getFlow());
+		if(uscite.get(0).getElemento()!=null)
+			uscite.get(0).getElemento().simulate(observer);
+	}
+	@Override
+	public void simulate(SimulationObserverExt observer, boolean enableMaxFlowCheck) {
+		double inflow=inFlow(ingresso,this);
+		observer.notifyFlow("Tap",name,inflow,this.getFlow());
+		if(enableMaxFlowCheck && inflow>maxFlow)
+			observer.notifyFlowError("Tap", name, inflow, maxFlow);
+		if(uscite.get(0).getElemento()!=null)
+			uscite.get(0).getElemento().simulate(observer,enableMaxFlowCheck);
+	}
+	
+	@Override
+	public StringBuffer layout(int buff) {
+		StringBuffer sb=new StringBuffer("-> ["+name+"]Tap ");
+		sb.append(uscite.get(0).getElemento().layout(buff+sb.length()));
+		return sb;
+	}
+
+	@Override
+	public void setMaxFlow(double maxFlow) {
+		this.maxFlow=maxFlow;	
+	}
+
+	
+
+}

@@ -1,0 +1,29 @@
+package applications;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Applicant {
+	private String name;
+	private SortedMap<Skill,Integer> capabilities;
+	
+	public Applicant(String name, SortedMap<Skill, Integer> capabilities) {
+		super();
+		this.name = name;
+		this.capabilities = capabilities;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	public String getCapabilitiesToString() {
+		if(capabilities.isEmpty()) return "";
+		return capabilities.entrySet().stream()
+				.map((Map.Entry<Skill,Integer> e) -> e.getKey()+":"+e.getValue() )
+				.collect(Collectors.joining(","));
+	}
+	
+}

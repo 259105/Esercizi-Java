@@ -1,0 +1,92 @@
+package trail;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+public class Trail {
+	public int bibNumbers=1;
+	public SortedSet<Runner> runners=new TreeSet<>();
+
+    public int newRunner(String name, String surname){
+        runners.add(new Runner(name,surname,bibNumbers));
+        return bibNumbers++;
+    }
+    
+    public Runner getRunner(int bibNumber){
+        for(Runner r:runners)
+        	if (r.getBibNumber()==bibNumber)
+        		return r;
+        return null;
+    }
+    
+    public Collection<Runner> getRunner(String surname){
+        return runners.stream()
+        		.filter(r->r.getSurname().equals(surname))
+        		.collect(Collectors.toList());
+    }
+    
+    public List<Runner> getRunners(){
+        return runners.stream()
+        		.collect(Collectors.toList());
+    }
+
+    public List<Runner> getRunnersByName(){
+        return runners.stream()
+        		.sorted(Comparator.comparing(Runner::getSurname)
+        				.thenComparing(Comparator.comparing(Runner::getName))
+        				.thenComparing(Comparator.comparing(Runner::getBibNumber)))
+        		.collect(Collectors.toList());
+    }
+    
+    public void addLocation(String location){
+        
+    }
+//    public void addLocation(String name, double lat, double lon, double elevation){
+//        
+//    }
+
+    public Location getLocation(String location){
+        return null;
+    }
+
+    public List<Location> getPath(){
+        return null;
+    }
+    
+    public void newDelegate(String name, String surname, String id){
+        
+    }
+
+    public List<String> getDelegates(){
+        return null;
+    }
+    
+
+    public void assignDelegate(String location, String delegate) throws TrailException {
+       
+    }
+ 
+    public List<String> getDelegates(String location){
+        return null;
+    }
+    
+    public long recordPassage(String delegate, String location, int bibNumber) throws TrailException {
+        return -1;
+    }
+    
+    public long getPassTime(String position, int bibNumber) throws TrailException {
+        return -1;
+    }
+    
+    public List<Runner> getRanking(String location){
+        return null;
+    }
+
+    public List<Runner> getRanking(){
+        return null;
+    }
+}

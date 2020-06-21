@@ -1,0 +1,54 @@
+package hydraulic;
+
+/**
+ * Represents the sink, i.e. the terminal element of a system
+ *
+ */
+public class Sink extends ElementExt {
+	
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	public Sink(String name) {
+		super(name);
+		
+	}
+	
+	@Override
+	public void connectReverse(Element elem){
+//		super.connectReverse(elem);
+		this.ingresso=elem;
+	}
+	
+	
+	@Override
+	public void simulate(SimulationObserver observer) {
+		observer.notifyFlow("Sink",name,inFlow(ingresso,this),SimulationObserver.NO_FLOW);
+	}
+	@Override
+	public void simulate(SimulationObserverExt observer, boolean enableMaxFlowCheck) {
+		double inflow=inFlow(ingresso,this);
+		observer.notifyFlow("Sink",name,inflow,SimulationObserver.NO_FLOW);
+		if(enableMaxFlowCheck && inflow>maxFlow)
+			observer.notifyFlowError("Sink", name, inflow, maxFlow);
+	}
+
+	@Override
+	public void connect(Element elem) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public StringBuffer layout(String buff) {
+		StringBuffer sb=new StringBuffer("-> ["+name+"]Sink *\n");
+		return sb;
+	}
+
+	@Override
+	public void setMaxFlow(double maxFlow) {
+		this.maxFlow=maxFlow;	
+	}
+
+	
+}

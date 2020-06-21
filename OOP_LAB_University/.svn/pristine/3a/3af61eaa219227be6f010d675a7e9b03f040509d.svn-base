@@ -1,0 +1,50 @@
+package university;
+
+import java.util.logging.Logger;
+
+public class UniversityExt extends University {
+	
+	private final static Logger logger = Logger.getLogger("University");
+
+	public UniversityExt(String name) {
+		super(name);
+		// Example of logging
+		logger.info("Creating extended university object");
+	}
+	
+	public void exam(int studentId, int courseID, int grade) {
+		if(grade>30 || grade<0) {
+			System.err.println("Errore voto non nel range(0-30)");
+			return;
+		}
+		int idS=studentId-STARTMATR;
+		int idC=courseID-STARTCOURSE;
+		Esame e= new Esame(grade,studenti[idS],corsi[idC]);
+		studenti[idS].regEsame(e);
+		corsi[idC].regEsame(e);
+	}
+
+	public String studentAvg(int studentId) {
+		int id=studentId-STARTMATR;
+		float avg=studenti[id].avg();
+		if(avg<0) {
+			return "Student "+ studentId + " hasn't taken any exams";
+		}else {
+			return "Student "+studentId+ " : "+ avg;
+		}
+	}
+	
+	public String courseAvg(int courseId) {
+		int id=courseId-STARTCOURSE;
+		float avg=corsi[id].avg();
+		if(avg<0) {
+			return "No student has taken the exam in "+corsi[id].getTitolo();
+		}else {
+			return "The average for the course "+corsi[id].getTitolo()+" is: "+avg;
+		}
+	}
+	
+	public String topThreeStudents() {
+		return null;
+	}
+}

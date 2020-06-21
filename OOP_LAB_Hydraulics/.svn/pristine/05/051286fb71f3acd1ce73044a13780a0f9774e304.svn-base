@@ -1,0 +1,73 @@
+package hydraulic;
+
+/**
+ * Represents a split element, a.k.a. T element
+ * 
+ * During the simulation each downstream element will
+ * receive a stream that is half the input stream of the split.
+ */
+
+public class Split extends Element {
+
+	private Element ingresso;
+	private Element uscita[] = new Element[2];
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	public Split(String name) {
+		super(name);
+		//TODO: complete
+	}
+	
+    /**
+     * connect one of the outputs of this split to a
+     * downstream component.
+     * 
+     * @param elem  the element to be connected downstream
+     * @param noutput the output number to be used to connect the element
+     */
+	public void connect(Element elem, int noutput){
+//		super.connect(elem);
+		if(elem instanceof Source) return;
+		this.uscita[noutput]=elem;
+		elem.connectReverse(this);
+	}
+	
+	@Override
+	public void connectReverse(Element elem){
+//		super.connectReverse(elem);
+		if(elem instanceof Sink) return;
+		this.ingresso=elem;
+	}
+	
+
+	/**
+	 * returns the downstream elements
+	 * @return array containing the two downstream element
+	 */
+    public Element[] getOutputs(){
+        return uscita;
+    }
+	
+    public double getFlow() {
+		this.flow=ingresso.flow/2;
+		return flow;
+	}
+    
+    @Override
+	public void simulate(SimulationObserver observer) {
+		observer.notifyFlow("Split",name,ingresso.flow,this.getFlow(),flow);
+		for(int i=0;i<2;i++) {
+			if(uscita[i]!=null) {
+				uscita[i].simulate(observer);
+			}
+		}
+	}
+
+	@Override
+	public void connect(Element elem) {
+		// TODO Auto-generated method stub
+		
+	}
+}

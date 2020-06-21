@@ -1,0 +1,32 @@
+package trail;
+
+public class Runner implements Comparable<Runner>{
+	private String name;
+	private String surname;
+	private int bibNumber;
+    
+    public Runner(String name, String surname, int bibNumber) {
+		super();
+		this.name = name;
+		this.surname = surname;
+		this.bibNumber = bibNumber;
+	}
+
+	public int getBibNumber(){
+        return bibNumber;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public String getSurname(){
+        return surname;
+    }
+
+	@Override
+	public int compareTo(Runner arg0) {
+		return this.bibNumber-arg0.bibNumber;
+	}
+
+}

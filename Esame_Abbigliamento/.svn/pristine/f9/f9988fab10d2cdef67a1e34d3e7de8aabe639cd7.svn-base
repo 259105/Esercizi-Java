@@ -1,0 +1,34 @@
+package abbigliamento;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Collezione {
+	private List<Capo> capi=new LinkedList<>();
+
+	public void add(Capo capo) {
+		capi.add(capo);
+		
+	}
+
+	public Collection<Capo> trova(Colore colore) {
+		return capi.stream()
+				.filter(c->c.getColore()==colore)
+				.collect(Collectors.toList());
+	}
+
+	public Collection<Capo> trova(Materiale materiale) {
+		return capi.stream()
+				.filter(c->c.getMateriale()==materiale)
+				.collect(Collectors.toList());
+	}
+
+	public Collection<Capo> trova(Modello modello) {
+		return capi.stream()
+				.filter(c->c.getModello()==modello)
+				.collect(Collectors.toList());
+	}
+
+}

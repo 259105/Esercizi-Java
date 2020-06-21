@@ -1,0 +1,40 @@
+package hydraulic;
+
+/**
+ * Represents the sink, i.e. the terminal element of a system
+ *
+ */
+public class Sink extends Element {
+	
+	private Element ingresso;
+	
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	public Sink(String name) {
+		super(name);
+		//TODO: complete
+	}
+	
+	@Override
+	public void connectReverse(Element elem){
+//		super.connectReverse(elem);
+		this.ingresso=elem;
+	}
+	
+	public double getFlow() {
+		this.flow=ingresso.flow;
+		return flow;
+	}
+	
+	@Override
+	public void simulate(SimulationObserver observer) {
+		observer.notifyFlow("Sink",name,ingresso.flow,this.getFlow());
+	}
+
+	@Override
+	public void connect(Element elem) {
+		// TODO Auto-generated method stub
+	}
+}

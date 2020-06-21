@@ -1,0 +1,30 @@
+package applications;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+public class Skill {
+	private String name;
+	private SortedMap<String,Position> positions=new TreeMap<>();
+	
+	public Skill(String name) {
+		super();
+		this.name = name;
+	}
+	
+	public String getName() {return name;}
+	public List<Position> getPositions() {return positions.values().stream().collect(Collectors.toList());}
+	
+	public boolean checkPosition(String name){
+		return positions.containsKey(name);
+	}
+	
+	public Position getPosition(String name) {
+		return positions.get(name);
+	}
+	
+	public void addPositions(String name){
+		positions.put(name, new Position(name));
+	}
+}

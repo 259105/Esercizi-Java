@@ -1,0 +1,22 @@
+package applications;
+
+import java.util.*;
+
+public class Position {
+	private String name;
+	
+	public Position(String name) {
+		super();
+		this.name = name;
+	}
+
+	public String getName() {return name;}
+	
+	public List<String> getApplicants() {
+		return null;
+	}
+	
+	public String getWinner() {
+		return null; 
+	}
+}

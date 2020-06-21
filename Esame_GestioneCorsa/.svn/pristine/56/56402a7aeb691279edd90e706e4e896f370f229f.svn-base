@@ -1,0 +1,25 @@
+package trail;
+
+public class Location implements Comparable<Location> {
+	private String name;
+	private int orderNum;
+	
+    public Location(String name, int orderNum) {
+		super();
+		this.name = name;
+		this.orderNum = orderNum;
+	}
+
+	public String getName(){
+        return name;
+    }
+
+    public int getOrderNum(){
+        return orderNum;
+    }
+
+	@Override
+	public int compareTo(Location o) {
+		return this.orderNum-o.orderNum;
+	}
+}

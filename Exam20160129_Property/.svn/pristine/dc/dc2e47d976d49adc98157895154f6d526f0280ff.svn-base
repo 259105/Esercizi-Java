@@ -1,0 +1,29 @@
+package managingProperties;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class Owner {
+	private String id;
+	private Set<Appartment> appartments=new HashSet<>();
+	
+	public Owner(String id, Set<Appartment> appartments) {
+		super();
+		this.id = id;
+		this.appartments = appartments;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @return the appartments
+	 */
+	public Set<Appartment> getAppartments() {
+		return appartments;
+	}
+}

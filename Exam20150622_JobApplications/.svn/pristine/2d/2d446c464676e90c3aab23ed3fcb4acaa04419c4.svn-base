@@ -1,0 +1,56 @@
+package applications;
+
+import java.util.*;
+
+public class HandleApplications {
+	private Map<String,Skill> skills=new HashMap<>();
+	
+	public void addSkills(String... names) throws ApplicationException {
+		for(String name:names) {
+			if(skills.containsKey(name))
+				throw new ApplicationException(name+" duplicated");
+			skills.put(name, new Skill(name));
+		}
+	}
+	public void addPosition(String name, String... skillNames) throws ApplicationException {
+		for(String skillname:skillNames) {
+			if(!skills.containsKey(skillname))
+				throw new ApplicationException(skillname + " undefined");
+			if(skills.get(skillname).checkPosition(name))
+				throw new ApplicationException(name +" duplicated");
+		}
+			
+		for(String skillname:skillNames)
+			skills.get(skillname).addPositions(name);
+	}
+	public Skill getSkill(String name) {return skills.get(name);}
+	public Position getPosition(String name) {
+		for(Skill skill:skills.values())
+			if(skill.checkPosition(name))
+				skill.getPosition(name);
+		return null;
+	}
+	
+	public void addApplicant(String name, String capabilities) throws ApplicationException {
+		
+	}
+	public String getCapabilities(String applicantName) throws ApplicationException {
+		return null;
+	}
+	
+	public void enterApplication(String applicantName, String positionName) throws ApplicationException {
+		
+	}
+	
+	public int setWinner(String applicantName, String positionName) throws ApplicationException {
+		return 0;
+	}
+	
+	public SortedMap<String, Long> skill_nApplicants() {
+		return null;
+	}
+	public String maxPosition() {
+		return null;
+	}
+}
+

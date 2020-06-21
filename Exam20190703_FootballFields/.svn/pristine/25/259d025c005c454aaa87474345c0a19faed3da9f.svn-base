@@ -1,0 +1,186 @@
+package it.polito.oop.futsal;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * Represents a infrastructure with a set of playgrounds, it allows teams
+ * to book, use, and  leave fields.
+ *
+ */
+public class Fields {
+	private Integer numF=1;
+    private Map<Integer,Features> fields=new HashMap<>();
+    private Map<Integer,Associate> associates=new HashMap<>();
+    private List<Book> books=new LinkedList<>();
+    private String openingTime;
+    private String closingTime;
+    public static class Features {
+        public final boolean indoor; // otherwise outdoor
+        public final boolean heating;
+        public final boolean ac;
+        public Features(boolean i, boolean h, boolean a) {
+            this.indoor=i; this.heating=h; this.ac = a;
+        }
+		public boolean equals(Features obj) {
+			if(this.indoor==obj.indoor
+					&& this.heating==obj.heating
+					&& this.ac==obj.ac)
+				return true;
+			return false;
+		}
+        
+    }
+    
+    public void defineFields(Features... features) throws FutsalException {
+        for(Features f:features)
+        	if(!f.indoor && (f.heating || f.ac))
+        		throw new FutsalException();
+        for(Features f:features)
+        	this.fields.put(numF++, f);
+    }
+    
+    public long countFields() {
+        return fields.values().stream()
+        		.count();
+    }
+
+    public long countIndoor() {
+        return fields.values().stream()
+        		.filter(f->f.indoor)
+        		.count();
+    }
+    
+    public String getOpeningTime() {
+        return openingTime;
+    }
+    
+    public void setOpeningTime(String time) {
+    	this.openingTime=time;
+    }
+    
+    public String getClosingTime() {
+        return closingTime;
+    }
+    
+    public void setClosingTime(String time) {
+    	this.closingTime=time;
+    }
+
+    public int newAssociate(String first, String last, String mobile) {
+    	Associate a=new Associate(first,last,mobile);
+        associates.put(a.hashCode(), a);
+        return a.hashCode();
+    }
+    
+    public String getFirst(int partyId) throws FutsalException {
+    	if(!associates.containsKey(partyId))
+    		throw new FutsalException();
+        return associates.get(partyId).getName();
+    }
+    
+    public String getLast(int associate) throws FutsalException {
+    	if(!associates.containsKey(associate))
+    		throw new FutsalException();
+        return associates.get(associate).getSurname();
+    }
+    
+    public String getPhone(int associate) throws FutsalException {
+    	if(!associates.containsKey(associate))
+    		throw new FutsalException();
+        return associates.get(associate).getCell();
+    }
+    
+    public int countAssociates() {
+        return associates.size();
+    }
+    
+    private boolean isMultiplo(String t) {
+    	String[] time =t.split(":");
+    	String[] oTime =openingTime.split(":");
+    	Integer IntTime=Integer.parseInt(time[0])*60+Integer.parseInt(time[1]);
+    	Integer IntOTime=Integer.parseInt(oTime[0])*60+Integer.parseInt(oTime[1]);
+    	if((IntOTime-IntTime)%60==0)
+    		return true;
+    	return false;
+    }
+    
+    public void bookField(int field, int associate, String time) throws FutsalException {
+    	if(!fields.containsKey(field) || !associates.containsKey(associate) || !isMultiplo(time))
+    		throw new FutsalException();
+    	Associate a=associates.get(associate);
+    	Book b=new Book(field,a,time);
+    	books.add(b);
+    	a.addbookField(b);
+    }
+
+    public boolean isBooked(int field, String time) {
+        for(Book b:books)
+        	if(b.getNumfield().equals(field) && b.getTime().equals(time))
+        		return true;
+        return false;
+    }
+    
+
+    public int getOccupation(int field) {
+    	Integer i=0;
+        for(Book b:books)
+        	if(b.getNumfield().equals(field))
+        		i++;
+        return i;
+    }
+    
+    
+    public List<FieldOption> findOptions(String time, Features required){
+        return fields.entrySet().stream()
+        		.filter(e-> !isBooked(e.getKey(),time))
+        		.filter(e-> {
+//        			if(required.ac!=e.getValue().ac 
+//        					|| required.heating!=e.getValue().heating
+//        					|| required.indoor!=e.getValue().indoor)
+//        				return false;
+        			if(required.ac)
+        				if(required.ac!=e.getValue().ac)
+        					return false;
+        			if(required.heating)
+        				if(required.heating!=e.getValue().heating)
+        					return false;
+        			if(required.indoor)
+        				if(required.indoor!=e.getValue().indoor)
+        					return false;
+        			return true;
+        		})
+        		.map(e-> new Field(e.getKey(),getOccupation(e.getKey())))
+        		.sorted(Comparator.comparing(Field::getOccupation)
+        				.thenComparing(Comparator.comparing(Field::getField)))
+        		.collect(Collectors.toList());
+    }
+    
+    public long countServedAssociates() {
+        return associates.values().stream()
+        		.filter(a->a.getBooks().size()>0)
+        		.count();
+    }
+    
+    public Map<Integer,Long> fieldTurnover() {
+        return fields.keySet().stream()
+        		.collect(Collectors.toMap(i->i,i-> (long)getOccupation(i)));
+    }
+    
+    public double occupation() {
+    	String[] cTime =closingTime.split(":");
+    	String[] oTime =openingTime.split(":");
+    	Integer IntCTime=Integer.parseInt(cTime[0])*60+Integer.parseInt(cTime[1]);
+    	Integer IntOTime=Integer.parseInt(oTime[0])*60+Integer.parseInt(oTime[1]);
+    	Integer i=(IntCTime-IntOTime)/60;
+        return fields.keySet().stream()
+        		.collect(Collectors.summingDouble(f->getOccupation(f)))
+        		/
+        		((double) i*fields.size());
+    }
+    
+}

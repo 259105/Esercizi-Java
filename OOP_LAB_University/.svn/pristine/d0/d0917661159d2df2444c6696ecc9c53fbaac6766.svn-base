@@ -1,0 +1,76 @@
+package university;
+
+public class Studente {
+	private static final int MAXFREQUENZE=25;
+	private String nome,cognome;
+	private int matr;
+	private Corso corsi[]=new Corso[MAXFREQUENZE];
+	private Esame esami[]=new Esame[MAXFREQUENZE];
+	
+	public Studente(String first,String last,int matricola) {
+		nome=first;
+		cognome=last;
+		matr=matricola;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+	public String getCognome() {
+		return cognome;
+	}
+	public int getMatricola() {
+		return matr;
+	}
+	public String getStudente() {//l'esecitatore l'ha chimato toString con Override
+		return getMatricola() +" " + getNome()+ " " + getCognome();
+	}
+	
+	public void iscrizione(Corso corso) {
+		for(int i=0;i<corsi.length;i++) {
+			//non può essere iscritto 2 volte allo stesso corso
+			if(corsi[i]==corso) return;
+			//lo metto al primo posto libero (non è prevista l'elimiazione)
+			if(corsi[i]==null) {
+				corsi[i]=corso;//copio la referenza
+				return;
+			}
+		}
+		System.out.println("La matricola è iscritta a troppi corsi.");
+	}
+	public String printIscrizioni() {
+		StringBuffer sb=new StringBuffer();
+		for(int i=0;corsi[i]!=null;i++) {
+			sb.append(corsi[i].getCorso()+"\n");
+		}
+		return sb.toString();
+	}
+	
+	public void regEsame(Esame e) {
+		for (int i=0;i<esami.length;i++) {
+			if(e.equals(esami[i])) {//controllo se l'esame c'era gia e lo sovrascrivo
+				esami[i]=e;
+			}
+			if(esami[i]==null) {
+				esami[i]=e;
+				return;
+			}
+		}
+	}
+	
+	public float avg() {
+		if(esami[0]==null) {
+			return -1;
+		}
+		float avg=0;
+		int i;
+		for(i=0;i<esami.length;i++) {
+			if(esami[i]==null)
+				break;
+			else
+				avg+=esami[i].getVoto();
+		}
+		return avg/i;
+	}
+	
+}

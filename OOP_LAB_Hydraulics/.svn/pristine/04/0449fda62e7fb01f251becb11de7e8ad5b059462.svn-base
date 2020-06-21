@@ -1,0 +1,130 @@
+package hydraulic;
+
+import java.util.ArrayList;
+/**
+ * Represents a split element, a.k.a. T element
+ * 
+ * During the simulation each downstream element will
+ * receive a stream that is half the input stream of the split.
+ */
+
+public class Split extends ElementExt {
+	
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	public Split(String name) {
+		super(name);
+		numOutput=2;
+		uscite= new ArrayList<>(numOutput);
+	}
+	
+    /**
+     * connect one of the outputs of this split to a
+     * downstream component.
+     * 
+     * @param elem  the element to be connected downstream
+     * @param noutput the output number to be used to connect the element
+     */
+	public void connect(Element elem, int noutput){
+		if(noutput>=numOutput) return;
+		if(elem instanceof Source) return;
+		Uscita u= new Uscita(elem,0.5,SimulationObserver.NO_FLOW);
+		uscite.add(noutput,u);
+		elem.connectReverse(this);
+	}
+	
+	@Override
+	public void connectReverse(Element elem){
+//		super.connectReverse(elem);
+		if(elem instanceof Sink) return;
+		this.ingresso=elem;
+	}
+	
+	/**
+	 * returns the downstream elements
+	 * @return array containing the two downstream element
+	 */
+    public Element[] getOutputs(){
+        Element U[] = new Element[numOutput];
+        int i=0;
+        for(Uscita u : uscite) {
+        	U[i++]=u.getElemento();
+        }
+        return U;
+    }
+	
+    public double getFlow(int noutput) {
+    	double flow=inFlow(ingresso,this)*uscite.get(noutput).getProporzione();
+    	uscite.get(noutput).setFlow(flow);
+		return flow;
+	}
+    
+    @Override
+	public void simulate(SimulationObserver observer) {
+    	double vFlow[]= new double[numOutput];
+    	for(int i=0;i<numOutput;i++)
+    		vFlow[i]=this.getFlow(i);
+    	
+		observer.notifyFlow("Split",name,inFlow(ingresso,this),vFlow);
+		for(Uscita u : uscite) 
+			if(u.getElemento()!=null)
+				u.getElemento().simulate(observer);
+	}
+    @Override
+	public void simulate(SimulationObserverExt observer, boolean enableMaxFlowCheck) {
+    	double vFlow[]= new double[numOutput];
+    	for(int i=0;i<numOutput;i++)
+    		vFlow[i]=this.getFlow(i);
+    	double inflow=inFlow(ingresso,this);
+		observer.notifyFlow("Split",name,inflow,vFlow);
+		if(enableMaxFlowCheck && inflow>maxFlow)
+			observer.notifyFlowError("Tap", name, inflow, maxFlow);
+		for(Uscita u : uscite) 
+			if(u.getElemento()!=null)
+				u.getElemento().simulate(observer,enableMaxFlowCheck);
+	}
+
+	
+	@Override
+	public StringBuffer layout(int buff) {
+		StringBuffer sb=new StringBuffer("-> ["+name+"]Split +");
+		int cbuff=sb.length()-1;//la + non c'è
+		
+		//Creazione spazio
+		StringBuffer spaceb=new StringBuffer("");
+		for(int i=0;i<cbuff+buff;i++)
+			spaceb.append(" ");
+		String space=spaceb.toString();
+		
+		int i=0;
+		for(Uscita u : uscite) {
+			//se ci sono dei split/multisplit annidati non funziona!!!!
+			if(u.getElemento()!=null) {
+				if(i==0) {
+					sb.append(u.getElemento().layout(buff+sb.length())+"\n");
+				}
+				else
+					sb.append(space+"+"+u.getElemento().layout(buff+sb.length())+"\n");
+			}else {
+				sb.append(space+"+ *\n");
+			}
+			i++;
+			if(i!=numOutput)
+				sb.append(space+"|\n");
+		}
+		return sb;
+	}
+
+	@Override
+	public void connect(Element elem) {
+		// TODO Auto-generated method stud	
+	}
+	@Override
+	public void setMaxFlow(double maxFlow) {
+		this.maxFlow=maxFlow;	
+	}
+
+	
+}
